@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vibe Coding Master - 15x15 오목(Gomoku) 인공지능(AI) 대전</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Vibe Coding Master - 15x15 오목(Gomoku) AI 대전</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -15,14 +14,16 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 16px 12px;
+      padding: 14px 10px;
+      user-select: none;
+      -webkit-user-select: none;
     }
     .header-box {
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     h1 {
-      font-size: 23px;
+      font-size: 22px;
       font-weight: 800;
       color: #38bdf8;
       letter-spacing: -0.5px;
@@ -34,59 +35,59 @@
     .sub {
       font-size: 13px;
       color: #94a3b8;
-      margin-top: 4px;
+      margin-top: 3px;
     }
     .top-controls {
       display: flex;
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 12px;
-      max-width: 580px;
+      gap: 10px;
+      margin-bottom: 10px;
+      max-width: 540px;
       width: 100%;
     }
     .mode-select-box {
       background: #0f172a;
       border: 1px solid #334155;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 9999px;
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
+      font-size: 12.5px;
     }
     .mode-select-box select {
       background: #1e293b;
       color: #38bdf8;
       border: 1px solid #475569;
       border-radius: 6px;
-      padding: 4px 8px;
+      padding: 3px 6px;
       font-size: 12px;
       font-weight: 700;
       outline: none;
       cursor: pointer;
     }
     .status-card {
-      background: rgba(30, 41, 59, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       backdrop-filter: blur(8px);
       border-radius: 12px;
-      padding: 10px 18px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       width: 100%;
-      max-width: 540px;
+      max-width: 500px;
       margin-bottom: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
     }
     .turn-indicator {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
     }
     .stone-icon {
@@ -110,58 +111,60 @@
       color: #38bdf8;
     }
     .ai-badge.thinking {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: rgba(245, 158, 11, 0.5);
+      background: rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.6);
       color: #f59e0b;
-      animation: pulse 1.2s infinite;
+      animation: pulse 1.0s infinite alternate;
     }
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0% { opacity: 0.5; transform: scale(0.97); }
+      100% { opacity: 1; transform: scale(1.03); }
     }
     .board-frame {
       background: #caa06d;
       background-image: radial-gradient(circle at 50% 50%, #d8ad7a 0%, #b88d59 100%);
-      padding: 20px;
+      padding: 16px;
       border-radius: 12px;
       box-shadow: 0 16px 40px rgba(0,0,0,0.7), inset 0 0 25px rgba(80, 45, 15, 0.35);
-      border: 6px solid #6d4327;
+      border: 5px solid #6d4327;
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+      max-width: 100%;
+      touch-action: manipulation;
     }
     canvas {
       display: block;
-      cursor: pointer;
+      cursor: crosshair;
       border-radius: 2px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .coord-label {
-      position: absolute;
-      color: #5c391d;
-      font-size: 10px;
-      font-weight: 700;
-      font-family: monospace;
-      user-select: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      touch-action: manipulation;
+      max-width: 100%;
+      height: auto;
     }
     .btn-group {
       display: flex;
       gap: 10px;
+      margin-bottom: 10px;
     }
     button {
       background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
       color: #ffffff;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
       padding: 9px 18px;
       border-radius: 8px;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      outline: none;
     }
     button:hover {
       background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
       transform: translateY(-1px);
+    }
+    button:active {
+      transform: translateY(1px);
     }
     .btn-secondary {
       background: #334155;
@@ -206,7 +209,7 @@
 
   <div class="header-box">
     <h1><span>🎮</span> Vibe Coding 15x15 오목(Gomoku) AI 대전</h1>
-    <div class="sub">바이브 코딩 휴리스틱 인공지능 엔진(AI Bot) & 4방향 승리 판정 시스템</div>
+    <div class="sub">바이브 코딩 휴리스틱 인공지능 엔진(AI Bot) &amp; 4방향 승리 판정 시스템</div>
   </div>
 
   <div class="top-controls">
@@ -242,8 +245,8 @@
   </div>
 
   <div class="btn-group">
-    <button onclick="resetGame()">새 게임 시작</button>
-    <button class="btn-secondary" onclick="undoMove()">한 수 무르기</button>
+    <button id="btnStartGame" onclick="resetGame()">🎮 새 게임 시작</button>
+    <button id="btnUndoMove" class="btn-secondary" onclick="undoMove()">↩ 한 수 무르기</button>
   </div>
 
   <div id="winModal" class="modal">
@@ -259,7 +262,7 @@
     const canvas = document.getElementById("omokCanvas");
     const ctx = canvas.getContext("2d");
     const CELL_SIZE = canvas.width / (BOARD_SIZE + 1);
-    
+
     let board = [];
     let currentTurn = 1; // 1: 흑돌(Black/Human), 2: 백돌(White/AI)
     let moveHistory = [];
@@ -268,13 +271,16 @@
     let winningLine = null;
 
     function initBoard() {
-      board = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(0));
+      board = [];
+      for (let r = 0; r < BOARD_SIZE; r++) {
+        board.push(new Array(BOARD_SIZE).fill(0));
+      }
       currentTurn = 1;
       moveHistory = [];
       isGameOver = false;
       isAiThinking = false;
       winningLine = null;
-      updateUI();
+      updateUI("준비");
       drawBoard();
     }
 
@@ -337,7 +343,7 @@
       }
 
       // 승리 5목 연결선 하이라이트
-      if (winningLine) {
+      if (winningLine && winningLine.length >= 2) {
         ctx.save();
         ctx.strokeStyle = "#eab308";
         ctx.lineWidth = 4.5;
@@ -382,12 +388,25 @@
       ctx.restore();
     }
 
-    canvas.addEventListener("click", (e) => {
+    function handlePointerAction(e) {
       if (isGameOver || isAiThinking) return;
 
       const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      let clientX = e.clientX;
+      let clientY = e.clientY;
+
+      if (clientX === undefined && e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+
+      if (clientX === undefined) return;
+
+      const x = (clientX - rect.left) * scaleX;
+      const y = (clientY - rect.top) * scaleY;
 
       const c = Math.round(x / CELL_SIZE) - 1;
       const r = Math.round(y / CELL_SIZE) - 1;
@@ -402,14 +421,20 @@
           }
         }
       }
-    });
+    }
+
+    canvas.addEventListener("click", handlePointerAction);
+    canvas.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      handlePointerAction(e);
+    }, { passive: false });
 
     function makeMove(r, c, player) {
       board[r][c] = player;
-      moveHistory.push({ r, c, player });
+      moveHistory.push({ r: r, c: c, player: player });
 
       const colLetters = "ABCDEFGHIJKLMNO";
-      const coordStr = ;
+      const coordStr = colLetters[c] + (r + 1);
 
       const winResult = checkWin(r, c, player);
       if (winResult) {
@@ -421,7 +446,7 @@
         return;
       }
 
-      currentTurn = currentTurn === 1 ? 2 : 1;
+      currentTurn = (currentTurn === 1) ? 2 : 1;
       drawBoard();
       updateUI(coordStr);
     }
@@ -435,8 +460,10 @@
       ];
 
       for (let dir of directions) {
-        let line = [{ r, c }];
-        for (let [dr, dc] of dir) {
+        let line = [{ r: r, c: c }];
+        for (let pair of dir) {
+          let dr = pair[0];
+          let dc = pair[1];
           let nr = r + dr;
           let nc = c + dc;
           while (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === player) {
@@ -461,7 +488,7 @@
       aiStatus.className = "ai-badge thinking";
       aiStatus.innerText = "🤖 AI 로봇 최적수 연산 중...";
 
-      setTimeout(() => {
+      setTimeout(function() {
         const bestMove = calculateBestAiMove();
         if (bestMove) {
           makeMove(bestMove.r, bestMove.c, 2);
@@ -479,7 +506,6 @@
       for (let r = 0; r < BOARD_SIZE; r++) {
         for (let c = 0; c < BOARD_SIZE; c++) {
           if (board[r][c] === 0) {
-            // 이 자리에 돌을 두었을 때 점수 평가
             const aiOffense = evaluatePosition(r, c, 2); // AI 공격 점수
             const humanThreat = evaluatePosition(r, c, 1); // 인간 방어 점수
 
@@ -487,21 +513,19 @@
             const centerDist = Math.abs(r - 7) + Math.abs(c - 7);
             const centerBonus = (14 - centerDist) * 2;
 
-            // 공격 우선, 단 상대의 4목이나 열린 3목은 즉시 방어
             const totalScore = (aiOffense * 1.2) + (humanThreat * 1.0) + centerBonus;
 
             if (totalScore > bestScore) {
               bestScore = totalScore;
-              candidates = [{ r, c, score: totalScore }];
+              candidates = [{ r: r, c: c, score: totalScore }];
             } else if (totalScore === bestScore) {
-              candidates.push({ r, c, score: totalScore });
+              candidates.push({ r: r, c: c, score: totalScore });
             }
           }
         }
       }
 
       if (candidates.length === 0) return null;
-      // 동점 후보 중 무작위 1개 선정 (플레이 다양성)
       return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
@@ -520,7 +544,9 @@
         let count = 1;
         let openEnds = 0;
 
-        for (let [dr, dc] of dir) {
+        for (let pair of dir) {
+          let dr = pair[0];
+          let dc = pair[1];
           let nr = r + dr;
           let nc = c + dc;
           while (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && board[nr][nc] === player) {
@@ -550,7 +576,7 @@
       return score;
     }
 
-    function updateUI(lastCoord = "준비") {
+    function updateUI(lastCoord) {
       const stoneIcon = document.getElementById("stoneIcon");
       const turnText = document.getElementById("turnText");
       const moveCount = document.getElementById("moveCount");
@@ -558,16 +584,16 @@
       const mode = document.getElementById("gameMode").value;
 
       moveCount.innerText = moveHistory.length;
-      if (lastCoord !== "준비") {
+      if (lastCoord) {
         lastMoveCoord.innerText = lastCoord;
       }
 
       if (currentTurn === 1) {
         stoneIcon.className = "stone-icon stone-black";
-        turnText.innerText = mode === "ai" ? "흑돌 (인간 창작자)" : "흑돌 (Player 1)";
+        turnText.innerText = (mode === "ai") ? "흑돌 (인간 창작자)" : "흑돌 (Player 1)";
       } else {
         stoneIcon.className = "stone-icon stone-white";
-        turnText.innerText = mode === "ai" ? "백돌 (Antigravity AI)" : "백돌 (Player 2)";
+        turnText.innerText = (mode === "ai") ? "백돌 (Antigravity AI)" : "백돌 (Player 2)";
       }
     }
 
@@ -576,7 +602,6 @@
       const mode = document.getElementById("gameMode").value;
 
       if (mode === "ai" && moveHistory.length >= 2) {
-        // AI 모드에서는 AI 수와 인간 수를 동시에 2수 무르기
         const lastAi = moveHistory.pop();
         board[lastAi.r][lastAi.c] = 0;
         const lastHuman = moveHistory.pop();
@@ -591,7 +616,11 @@
       winningLine = null;
       isGameOver = false;
       const colLetters = "ABCDEFGHIJKLMNO";
-      const coordStr = moveHistory.length > 0 ?  : "준비";
+      let coordStr = "준비";
+      if (moveHistory.length > 0) {
+        const prev = moveHistory[moveHistory.length - 1];
+        coordStr = colLetters[prev.c] + (prev.r + 1);
+      }
       updateUI(coordStr);
       drawBoard();
     }
@@ -612,13 +641,13 @@
 
       let winnerName = "";
       if (mode === "ai") {
-        winnerName = player === 1 ? "🏆 인간 창작자(흑돌) AI 격파 승리!" : "🤖 Antigravity AI 로봇(백돌) 승리!";
+        winnerName = (player === 1) ? "🏆 인간 창작자(흑돌) AI 격파 승리!" : "🤖 Antigravity AI 로봇(백돌) 승리!";
       } else {
-        winnerName = player === 1 ? "🏆 흑돌(Black) 5목 완성 승리!" : "🏆 백돌(White) 5목 완성 승리!";
+        winnerName = (player === 1) ? "🏆 흑돌(Black) 5목 완성 승리!" : "🏆 백돌(White) 5목 완성 승리!";
       }
 
       title.innerText = winnerName;
-      text.innerText = ;
+      text.innerText = "총 " + moveHistory.length + "수 만에 무결점 5-in-a-Row를 달성하였습니다!";
       modal.style.display = "flex";
     }
 
@@ -628,34 +657,33 @@
     }
 
     // ==========================================
-    // 자동 스크린샷 및 시나리오 렌더링 지원 (URL 파라미터)
+    // 초기화 및 URL 시나리오 테스트 지원
     // ==========================================
-    window.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("DOMContentLoaded", function() {
       initBoard();
       const params = new URLSearchParams(window.location.search);
       const scenario = params.get("scenario");
 
       if (scenario === "live" || scenario === "midgame") {
-        // 박진감 넘치는 실전 AI vs 인간 대국 상태 세팅 (18수)
         const moves = [
-          { r: 7, c: 7, p: 1 }, // H8
-          { r: 7, c: 8, p: 2 }, // I8
-          { r: 6, c: 7, p: 1 }, // H7
-          { r: 8, c: 7, p: 2 }, // H9
-          { r: 6, c: 8, p: 1 }, // I7
-          { r: 5, c: 9, p: 2 }, // J6
-          { r: 8, c: 6, p: 1 }, // G9
-          { r: 9, c: 5, p: 2 }, // F10
-          { r: 5, c: 7, p: 1 }, // H6
-          { r: 4, c: 7, p: 2 }, // H5
-          { r: 7, c: 6, p: 1 }, // G8
-          { r: 7, c: 5, p: 2 }, // F8
-          { r: 6, c: 6, p: 1 }, // G7
-          { r: 8, c: 8, p: 2 }, // I9
-          { r: 9, c: 9, p: 1 }, // J10
-          { r: 5, c: 5, p: 2 }, // F6
-          { r: 6, c: 5, p: 1 }, // F7
-          { r: 6, c: 4, p: 2 }  // E7 (AI 최신수)
+          { r: 7, c: 7, p: 1 },
+          { r: 7, c: 8, p: 2 },
+          { r: 6, c: 7, p: 1 },
+          { r: 8, c: 7, p: 2 },
+          { r: 6, c: 8, p: 1 },
+          { r: 5, c: 9, p: 2 },
+          { r: 8, c: 6, p: 1 },
+          { r: 9, c: 5, p: 2 },
+          { r: 5, c: 7, p: 1 },
+          { r: 4, c: 7, p: 2 },
+          { r: 7, c: 6, p: 1 },
+          { r: 7, c: 5, p: 2 },
+          { r: 6, c: 6, p: 1 },
+          { r: 8, c: 8, p: 2 },
+          { r: 9, c: 9, p: 1 },
+          { r: 5, c: 5, p: 2 },
+          { r: 6, c: 5, p: 1 },
+          { r: 6, c: 4, p: 2 }
         ];
         for (let m of moves) {
           board[m.r][m.c] = m.p;
@@ -667,7 +695,6 @@
         const aiStatus = document.getElementById("aiStatus");
         aiStatus.innerText = "🤖 AI 로봇 E7 착수 완료";
       } else if (scenario === "win") {
-        // 승리 5목 완성 상태 세팅
         const moves = [
           { r: 7, c: 7, p: 1 },
           { r: 7, c: 8, p: 2 },
@@ -677,7 +704,7 @@
           { r: 9, c: 5, p: 2 },
           { r: 4, c: 4, p: 1 },
           { r: 4, c: 7, p: 2 },
-          { r: 3, c: 3, p: 1 }  // 5연속 대각선 완성!
+          { r: 3, c: 3, p: 1 }
         ];
         for (let m of moves) {
           board[m.r][m.c] = m.p;
